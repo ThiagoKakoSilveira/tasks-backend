@@ -37,9 +37,18 @@ pipeline {
         }
         stage('API Test') {
             steps {
-                dir('api-test'){
+                dir('api-test') {
                     git 'https://github.com/ThiagoKakoSilveira/tasks-api-test'
                     sh 'mvn test'
+                }
+            }
+        }
+        stage('Deploy Frontend') {
+            steps {
+                dir('frontend') {
+                    git 'https://github.com/ThiagoKakoSilveira/tasks-frontend'
+                    sh 'mvn clean package'
+                    deploy adapters: [tomcat8(credentialsId: 'TomcatLogin', path: '', url: 'http://localhost:8001/')], contextPath: 'tasks', war: 'target/tasks.war'
                 }
             }
         }
